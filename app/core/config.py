@@ -7,6 +7,7 @@ Never import os.getenv directly elsewhere — use `get_settings()`.
 
 from __future__ import annotations
 
+import json
 import os
 from functools import lru_cache
 from typing import List
@@ -44,17 +45,26 @@ class Settings(BaseSettings):
     ADMIN_PASSWORD_HASH: str = ""      # bcrypt hash; set via `scripts/hash_password.py`
 
     # ─── CORS ─────────────────────────────────────────────────────────────────
-    ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "https://kitdrop.vercel.app",
-    ]
+    ALLOWED_ORIGINS: str = "http://localhost:3000,https://kitdrop.vercel.app"
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod
     def parse_origins(cls, v):
         if isinstance(v, str):
-            return [o.strip() for o in v.split(",")]
+            value = v.strip()
+            if value.startswith("[") and value.endswith("]"):
+                try:
+                    parsed = json.loads(value)
+                    if isinstance(parsed, list):
+                        return ",".join(str(o).strip() for o in parsed)
+                except json.JSONDecodeError:
+                    pass
+            return value
         return v
+
+    def get_allowed_origins(self) -> List[str]:
+        """Parse ALLOWED_ORIGINS string into list for CORS middleware."""
+        return [o.strip() for o in self.ALLOWED_ORIGINS.split(",") if o.strip()]
 
     # ─── WhatsApp ─────────────────────────────────────────────────────────────
     WA_NUMBER: str = "919999999999"
