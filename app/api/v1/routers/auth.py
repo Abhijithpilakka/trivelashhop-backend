@@ -7,6 +7,7 @@ POST /auth/login  — returns a JWT for the admin panel
 from __future__ import annotations
 
 from fastapi import APIRouter
+from starlette.concurrency import run_in_threadpool
 
 from app.core.config import get_settings
 from app.core.exceptions import UnauthorizedError
@@ -17,7 +18,7 @@ router = APIRouter()
 
 
 @router.post("/login", response_model=TokenOut, summary="Admin login")
-def login(body: LoginIn) -> TokenOut:
+async def login(body: LoginIn) -> TokenOut:
     settings = get_settings()
 
     if body.username != settings.ADMIN_USERNAME:
@@ -26,7 +27,9 @@ def login(body: LoginIn) -> TokenOut:
     if not settings.ADMIN_PASSWORD_HASH:
         raise UnauthorizedError("Admin account not configured. Set ADMIN_PASSWORD_HASH.")
 
-    if not verify_password(body.password, settings.ADMIN_PASSWORD_HASH):
+    # Run password verification in a thread to avoid async context issues with passlib
+    is_valid = await run_in_threadpool(verify_password, body.password, settings.ADMIN_PASSWORD_HASH)
+    if not is_valid:
         raise UnauthorizedError("Invalid credentials.")
 
     token = create_access_token(subject=settings.ADMIN_USERNAME)
