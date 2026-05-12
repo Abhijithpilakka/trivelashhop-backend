@@ -13,10 +13,10 @@ from app.schemas.orders import ShippingEstimateOut
 
 _ZONES = [
     # (prefix_range_start, prefix_range_end, zone_label, eta, cost_override)
-    (40, 41, "Mumbai Local",   "1–2 days",  0),
-    (36, 42, "West India",     "2–3 days",  60),
-    (50, 69, "Pan India",      "3–5 days",  None),   # None = default
-    (10, 29, "Pan India",      "3–5 days",  None),
+    (40, 41, "Mumbai Local",   "3–4 days",  60),
+    (36, 42, "West India",     "4–5 days",  60),
+    (50, 69, "Pan India",      "5–6 days",  None),   # None = default
+    (10, 29, "Pan India",      "5–6 days",  None),
     (78, 79, "Northeast",      "5–7 days",  120),
     (83, 85, "Andaman & Nicobar / Lakshadweep", "7–10 days", 200),
 ]

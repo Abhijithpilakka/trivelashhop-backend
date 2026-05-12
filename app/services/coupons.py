@@ -20,9 +20,8 @@ log = get_logger(__name__)
 
 # Hardcoded fallback coupons (move everything to DB for production)
 _BUILTIN_COUPONS: Dict[str, Dict] = {
-    "KITDROP10": {"type": "pct", "value": 10, "min_order": 0, "max_uses": None},
-    "FLAT150": {"type": "flat", "value": 150, "min_order": 500, "max_uses": None},
-    "NEWSEASON": {"type": "pct", "value": 15, "min_order": 999, "max_uses": None},
+    "FLAT150": {"type": "flat", "value": 150, "min_order": 999, "max_uses": None},
+    "NEWSEASON": {"type": "pct", "value": 15, "min_order": 1499, "max_uses": None},
 }
 
 
