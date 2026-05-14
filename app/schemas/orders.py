@@ -92,7 +92,10 @@ class OrderOut(BaseModel):
     coupon_code: Optional[str]
     whatsapp_url: str
     created_at: str
-
+    customer_name: str | None = None
+    customer_phone: str | None = None
+    customer_email: str | None = None
+    pincode: str | None = None
 
 # ─── Admin Order Update ──────────────────────────────────────────────────────
 
@@ -106,3 +109,16 @@ class OrderListOut(BaseModel):
     total: int
     page: int
     page_size: int
+
+class OrderCustomerInfo(BaseModel):
+    pincode: Optional[str] = Field(None, pattern=r"^\d{6}$")
+    customer_name: Optional[str] = Field(None, max_length=100)
+    customer_phone: Optional[str] = Field(None, pattern=r"^\d{10}$")
+    customer_email: Optional[str] = Field(None, max_length=120)
+
+class OrderCustomerUpdateOut(BaseModel):
+    id: str
+    customer_name: str | None = None
+    customer_phone: str | None = None
+    customer_email: str | None = None
+    pincode: str | None = None

@@ -23,6 +23,8 @@ from app.schemas.orders import (
     CouponOut,
     CouponValidateIn,
     OrderCreateIn,
+    OrderCustomerInfo,
+    OrderCustomerUpdateOut,
     OrderListOut,
     OrderOut,
     OrderStatusUpdate,
@@ -100,3 +102,15 @@ async def update_order_status(
     db: Client = Depends(get_db),
 ):
     return await order_svc.update_order_status(db, order_id, update)
+
+@router.patch(
+    "/{order_id}/customer",
+    response_model=OrderCustomerUpdateOut,
+    dependencies=[AdminDep],
+)
+def update_order_customer_info(
+    order_id: str,
+    payload: OrderCustomerInfo,
+    db=Depends(get_db),
+):
+    return order_svc.update_customer_info(db, order_id, payload)

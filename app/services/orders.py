@@ -261,4 +261,28 @@ def _row_to_order_out(row: Dict) -> OrderOut:
         coupon_code=row.get("coupon_code"),
         whatsapp_url="",   # not stored; rebuild if needed
         created_at=str(row.get("created_at", "")),
+        customer_name=row.get("customer_name"),
+        customer_phone=row.get("customer_phone"),
+        customer_email=row.get("customer_email"),
+        pincode=row.get("pincode"),
     )
+
+def update_customer_info(db, order_id: str, payload):
+    update_data = payload.model_dump(exclude_unset=True)
+
+    if not update_data:
+        raise ValueError("No fields provided for update")
+
+    order = (
+        db.table("orders")
+        .update(update_data)
+        .eq("id", order_id)
+        .execute()
+    )
+
+    data = order.data
+
+    if not data:
+        raise NotFoundError("Order not found")
+
+    return data[0]
